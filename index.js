@@ -29,20 +29,69 @@ app.use(session({
   })) ; 
 
 app.get("/",function(req,res){
-    if(req.session.saveName){
-        var sql="select * from user where Email='"+req.session.saveName+"';";
-        con.query(sql,function(err,results){
-            if(err) throw err;
-            con.query("select * from customer;",function(err,results1){
-                if(err) throw err;
-                res.render("home",{results:results, results1 : results1});
-            });
+    // if(req.session.saveName){
+    //     var sql="select * from user where Email='"+req.session.saveName+"';";
+    //     con.query(sql,function(err,results){
+    //         if(err) throw err;
+    //         con.query("select * from customers order by stt ASC",function(err,results1){
+    //             if(err) throw err;
+    //             res.render("home",{results:results, results1 : results1});
+    //         });
                 
+    //     });
+    // }
+    // else
+    //     res.redirect("login");
+    res.redirect("page/1");
+});
+
+app.get("/page/:page",function(req,res){
+    if(req.session.saveName){
+        var sql="select Username from user where Email='"+req.session.saveName+"';";
+        con.query(sql,function(err,results){
+            if (err) throw err;
+            var sql1="select * from customers order by stt limit "+ (req.params.page-1)*10 +",10;";
+            console.log(sql1);
+            con.query(sql1,function(err,results1){
+                if(err) throw err;
+                con.query("select stt from customers;",function(err,results3){
+                if(err) throw err;
+                var n=parseInt(req.params.page);//trang thu n
+                var m=Math.ceil(results3.length/10);//tong so trang
+                res.render("home",{results:results, results1 : results1,results3:n,results2:m});
+                });
+            });
         });
     }
     else
-        res.redirect("login");
+        res.redirect("../login");
 });
+// app.get("/page/:page",function(req,res){
+//     if(req.session.saveName){
+//         var sql="select Username from user where Email='"+req.session.saveName+"';";
+//         con.query(sql,function(err,results){
+//             if(err) throw err;
+//             var results=results;
+//         });
+//         var sql1="select * from customers order by stt ASC limit "+ (req.params.page-1)*10 +","+(((req.params.page)-1)*10 +10)+";";
+//         con.query(sql1,function(err,results1){
+//             if(err) throw err;
+//             var results1 = results1;
+//         });
+//         con.query("select stt from customers;",function(err,results2){ 
+//             if(err) throw err;
+//             var results2=Math.ceil((results2.length+1)/10);    
+//         });
+//         results3=parseInt(req.params.page);
+//         res.render("home",{results:results,results1:results1,results2:results2,results3:results3});
+
+
+//     }
+//     else
+//         res.redirect("../login");
+// });
+
+
 app.get("/login",function(req,res){
     if(req.session.saveName){
         return res.redirect("/");
@@ -60,7 +109,7 @@ app.post("/login",urlencodedParser,function(req,res){
         }
    });
   
-});
+}); 
 
 app.get("/register",function(req,res){
     res.render("register");
@@ -92,7 +141,7 @@ app.get("/add",function(req,res){
     return res.redirect("/login");
 });
 app.post("/add",urlencodedParser,function(req,res){
-    var sql="insert into customer(id,name,age) values('"+rd.generate(10)+"','"+req.body.name+"','"+req.body.age+"');";
+    var sql="insert into customers(id,name,age) values('"+rd.generate(10)+"','"+req.body.name+"','"+req.body.age+"');";
     con.query(sql,function(err){
         if(err) throw err;
         console.log("them thanh cong");
@@ -101,7 +150,7 @@ app.post("/add",urlencodedParser,function(req,res){
 
 });
 app.get("/delete/:id",function(req,res){
-    var sql="delete from customer where id='"+req.params.id+"';";
+    var sql="delete from customers where id='"+req.params.id+"';";
     con.query(sql,function(err){
         if(err) throw err;
         console.log("xoa thanh cong");
@@ -109,7 +158,7 @@ app.get("/delete/:id",function(req,res){
     res.redirect("/");
 });
 app.get("/update/:id",function(req,res){
-    var sql="select * from customer where id='"+req.params.id+"';";
+    var sql="select * from customers where id='"+req.params.id+"';";
     con.query(sql,function(err,results){
         if(err) throw err;
         res.render("update",{results});
@@ -118,7 +167,7 @@ app.get("/update/:id",function(req,res){
 });
 app.post("/update/:id",urlencodedParser,function(req,res){
     console.log(req.params.id);
-    var sql="update customer set name='"+req.body.newname+"',age='"+req.body.newage+"' where id ='"+req.params.id+"';";
+    var sql="update customers set name='"+req.body.newname+"',age='"+req.body.newage+"' where id ='"+req.params.id+"';";
     con.query(sql,function(err){
         if (err) throw err;
         console.log("update thanh cong");
@@ -126,11 +175,14 @@ app.post("/update/:id",urlencodedParser,function(req,res){
     res.redirect("/");
 });
 app.get("/detail/:id",function(req,res){
-    var sql="select * from customer where id='"+req.params.id+"';";
+    var sql="select * from customers where id='"+req.params.id+"';";
     con.query(sql,function(err,results){
         if(err) throw err;
         res.render("detail",{results});
     });
+});
+app.get('*', function(req, res) {
+    res.redirect('/');
 });
 app.listen(8080,function(){
 
