@@ -1,12 +1,11 @@
-const mysql =require('mysql');
-const con = mysql.createConnection({
-    host: "localhost",
-    user: "tuanna2",
-    password: "anhtuan",
-    database: "contacto"
-});
-con.connect(function(err){
-    if(err) throw err;
-});
- 
-module.exports = con;
+const knex = require('knex')({
+    client: 'mysql',
+    connection: {
+      host : '127.0.0.1',
+      user : 'tuanna2',
+      password : 'anhtuan',
+      database : 'contacto'
+    }
+  });
+
+module.exports = knex;

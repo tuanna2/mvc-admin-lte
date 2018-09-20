@@ -50,7 +50,6 @@ controllerCustomer.detail = (req,res) => {
 controllerCustomer.deleteid = (req,res) => {
     customer.delete(req.params.id);
     res.redirect("/");
-    console.log("Xoa thanh cong");
 }
 controllerCustomer.page = (req,res) => {
     if(req.session.saveName){
