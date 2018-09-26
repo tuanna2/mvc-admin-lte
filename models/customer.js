@@ -3,7 +3,7 @@ const customer = {};
 
 customer.showPage = (page) =>{
     return new Promise((resolve,reject) => {
-        knex('customers').select('*').orderBy('stt','ASC').limit(10).offset((page-1)*10)
+        knex('customers').select('*').orderBy('stt','ASC').limit(5).offset((page-1)*10)
         .then( results => {
             resolve(results);
         })
@@ -14,7 +14,7 @@ customer.showPage = (page) =>{
 }
 customer.showAll =() =>{
     return new Promise((resolve,reject) => {
-        knex('customers').select('*')
+        knex('customers').select('*').orderBy('stt','ASC')
         .then( results => {
             resolve(results);
         })
@@ -51,11 +51,20 @@ customer.detail =(id) => {
             reject("Err show detail",err);
         });
      }); 
-    
 }
-
-customer.update_post =(newname,newage,id) => {
+customer.update =(newname,newage,id) => {
     knex('customers').where('id',id).update({name:newname,age:newage})
     .catch(err =>console.log(err));
+}
+customer.search = (data) => {
+    return new Promise((resolve,reject) => {
+        knex('customers').where('name', 'like', '%'+data+'%')
+        .then(results =>{
+            resolve(results);
+        })
+        .catch(err =>{
+            reject("Err search",err);
+        });
+    }); 
 }
 module.exports = customer;

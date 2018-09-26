@@ -32,7 +32,7 @@ controllerCustomer.update_get = (req,res) => {
         res.redirect("../login")
 };
 controllerCustomer.update_post = (req,res) => {
-    customer.update_post(req.body.newname,req.body.newage,req.params.id);
+    customer.update(req.body.newname,req.body.newage,req.params.id);
     res.redirect("/");
     console.log("update thanh cong"); 
 }

@@ -31,6 +31,7 @@ user.getUsername = (email) =>{
             resolve(results);
         })
         .catch(err => {
+            reject();
             console.log("Err get email:", err);
         })
      }); 

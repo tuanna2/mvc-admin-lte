@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const async = require("async");
 const routes = require("./routes");
+const api = require("./api/routes");
+
 app.use(express.static("views/display"));
 app.set("view engine","ejs"); 
 app.set("views","./views"); 
@@ -12,7 +14,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: { maxAge:1000*60*60 }
   })) ; 
-app.use('/',routes);
+app.use(api);
 
 app.listen(3000,function(){
     console.log("Run port 3000");
